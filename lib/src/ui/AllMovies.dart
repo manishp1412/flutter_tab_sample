@@ -12,6 +12,13 @@ class AllMovies extends StatefulWidget {
 }
 
 class _AllMoviesState extends State<AllMovies> {
+  Future<Movies> listMovies;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listMovies = getAllMovies();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +31,7 @@ class _AllMoviesState extends State<AllMovies> {
         padding: EdgeInsets.all(10.0),
         color: Color(Constants.ThemeColor),
         child: FutureBuilder<Movies>(
-          future: getAllMovies(),
+          future: listMovies,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done)
               return Container(
@@ -105,7 +112,12 @@ class _AllMoviesState extends State<AllMovies> {
                   },
                 ),
               );
-            else
+            else if(snapshot.hasError)
+            {
+              return Center(
+                child: Text("No data found"),
+              );
+            }
               return Center(
                 child: CircularProgressIndicator(backgroundColor: Color(Constants.ThemeBgColor),),
               );

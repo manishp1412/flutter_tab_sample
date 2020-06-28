@@ -12,6 +12,7 @@ class PopularMovies extends StatefulWidget {
 }
 
 class _PopularMoviesState extends State<PopularMovies> {
+  Future<PopularMovieList> listPopular;
   List<DetailResult> filterlist = new List<DetailResult>();
   List<DetailResult> movieList = new List<DetailResult>();
   Widget appbarTitle = new Text("Popular Movies");
@@ -24,6 +25,7 @@ class _PopularMoviesState extends State<PopularMovies> {
     super.initState();
     isSearch = false;
     searchText = "";
+    listPopular = getLatestMovies();
   }
   _PopularMoviesState(){
     searchQuery.addListener((){
@@ -110,7 +112,7 @@ class _PopularMoviesState extends State<PopularMovies> {
         padding: EdgeInsets.all(10.0),
         color: Color(Constants.ThemeColor),
         child: FutureBuilder<PopularMovieList>(
-          future: getLatestMovies(),
+          future: listPopular,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               movieList = snapshot.data.results;
@@ -163,11 +165,14 @@ class _PopularMoviesState extends State<PopularMovies> {
                   },
                 ),
               );
-            } else {
+            } else if(snapshot.hasError){
               return Center(
-                child: CircularProgressIndicator()
+                child: Text('No data found'),
               );
             }
+            return Center(
+                child: CircularProgressIndicator()
+              );
           },
         ),
       ),
@@ -179,6 +184,14 @@ class _PopularMoviesState extends State<PopularMovies> {
       padding: EdgeInsets.only(top: 10),
       child: Text(text,
         style: Styles.listTextStyle,
+      ),
+    );
+  }
+
+  Widget setEmptyView(){
+    return Container(
+      child: Center(
+        child: Text("No data found"),
       ),
     );
   }
